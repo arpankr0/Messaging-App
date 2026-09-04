@@ -3,6 +3,7 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/User.js";
 import bcrypt from 'bcrypt';
 import "dotenv/config";
+import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async (req,res)=>{
     const {fullName,email,password} = req.body;
@@ -84,4 +85,20 @@ export const logout = (_,res)=>{
         message:"Logged out successfully"
     })
 
+}
+
+export const updateProfile = async(req,res)=>{
+    try{
+        const {profilePic} = req.body;
+        if(!profilePic) res.status(400).json({message:"Please provide profile picture"});
+        const user = req.user._id;
+        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+        const updateUser = await User.findByIdAndUpdate(user,{profilePic:uploadResponse.secure_url},{new:true});
+        res.status(200).json(updateUser);
+
+    } catch(error){
+        res.status(500).json(error.message);
+        
+
+    }
 }
