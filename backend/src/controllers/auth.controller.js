@@ -27,25 +27,20 @@ export const signup = async (req,res)=>{
         if(newUser){
            const savedUser= await newUser.save();
             generateToken(savedUser._id,res);
-            res.status(201).json({
+            try {
+                await sendWelcomeEmail(savedUser.email,savedUser.fullName,process.env.CLIENT_URL);
+            } catch (error) {
+                console.log("Failed to send welcome email",error);
+            }
+            return res.status(201).json({
                 _id:savedUser._id,
                 fullName:savedUser.fullName,
                 email:savedUser.email,
-               profilePic:savedUser.profilePic
+                profilePic:savedUser.profilePic
             });
-            try {
-                await sendWelcomeEmail(savedUser.email,savedUser.fullName,process.env.CLIENT_URL);
-                
-            } catch (error) {
-                console.log("Failed to send welcome email",error);
-
-                
-            }
         } else {
             return res.status(500).json({message:"Internal server error"});
-
         }
-        return res.status(201).json({message:"User created successfully"});
     }catch(error){
         return res.status(500).json(error.message);
     }

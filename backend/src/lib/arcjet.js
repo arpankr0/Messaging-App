@@ -1,31 +1,23 @@
 import arcjet, { shield, detectBot, slidingWindow } from "@arcjet/node";
 import 'dotenv/config';
 
+const mode = process.env.ARCJET_ENV === "development" ? "DRY_RUN" : "LIVE";
+
 const aj = arcjet({
-  // Get your site key from https://console.arcjet.com and set it as an environment
-  // variable rather than hard coding.
   key: process.env.ARCJET_KEY,
   rules: [
-    // Shield protects your app from common attacks such as SQL injection
-    shield({ mode: "LIVE" }),
-    // Create a bot detection rule
+    shield({ mode }),
     detectBot({
-      mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
-      // Block all bots except the following
+      mode,
       allow: [
-        "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
-        // Uncomment to allow these other common bot categories
-        // See the full list at https://arcjet.com/bot-list
-        //"CATEGORY:MONITOR", // Uptime monitoring services
-        //"CATEGORY:PREVIEW", // Link previews such as Slack, Discord
+        "CATEGORY:SEARCH_ENGINE",
       ],
     }),
-    // Create a token bucket rate limit. Other algorithms are supported.
-   slidingWindow({
-    mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
-    max:100, // Max number of requests allowed in the window
-    interval:60
-   })
+    slidingWindow({
+      mode,
+      max: 100,
+      interval: 60,
+    }),
   ],
 });
 
