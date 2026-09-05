@@ -23,7 +23,7 @@ const aj = arcjet({
     // Create a token bucket rate limit. Other algorithms are supported.
    slidingWindow({
     mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
-    max: 5, // Max number of requests allowed in the window
+    max:100, // Max number of requests allowed in the window
     interval:60
    })
   ],
