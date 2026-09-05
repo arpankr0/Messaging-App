@@ -1,7 +1,10 @@
-import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+import daisyui from 'daisyui'
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-})
+  plugins: [
+    tailwindcss(),daisyui,
+    // add your framework plugin here (e.g., react(), vue())
+  ],
+})   
